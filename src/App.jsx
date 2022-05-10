@@ -3,11 +3,17 @@ import {firebase} from './firebase'
 
 function App() {
 
+  //array de tareas
   const [tareas, setTareas] = React.useState([])
   const [tarea, setTarea] = React.useState('')
+
+  //edita las tareas
   const [edicion, setEdicion] = React.useState(false)
+
+  //id de las tareas
   const [id, setId] = React.useState('')
 
+  //obtiene los datos de firebase
   React.useEffect(() => {
     const obtenerDatos = async () => {
       try{
@@ -25,6 +31,8 @@ function App() {
     obtenerDatos()
 
   }, [])
+
+  //funcion agregar tarea
 
   const agregar = async (e) => {
     e.preventDefault()
@@ -58,6 +66,8 @@ function App() {
     console.log(tarea)
   }
 
+  //funcion eliminar tarea
+
   const eliminar = async (id) => {
     try {
       
@@ -72,11 +82,15 @@ function App() {
     }
   }
 
+  //funcion llevar contenido de la tarea para editar
+
   const activarEdicion = (item) => {
     setEdicion(true)
     setTarea(item.name)
     setId(item.id)
   }
+
+  //funcion de boton editar tareas
 
   const editar = async (e) => {
     e.preventDefault()
@@ -87,6 +101,8 @@ function App() {
       await db.collection('tareas').doc(id).update({
         name: tarea
       })
+
+      //funcion de editar el array de las tareas en firebase
 
       const arrayEditado = tareas.map(item => (
         item.id === id ? { id: item.id, fecha: item.fecha, name: tarea } : item
@@ -101,16 +117,25 @@ function App() {
     }
   }
 
+  //contenido HTML
+
   return (
+
+    //lista de las tareas
+
     <div className="container mt-5">
-      <h1 className='text-center'>FIREBASE</h1>
+      <h1 className='text-center'>Anota tus tareas</h1>
       <hr />
       <div className="row">
         <div className="col-md-6">
+        <h2 className="text-center">Lista de tareas</h2>
+
+          {/* ul de las tareas agregadas */}
+
           <ul className="list-group">
             {
               tareas.map(item => (
-                <li className="list-group-item" key={item.id}>
+                <li className="list-group-item text-break" key={item.id}>
                   {item.name}
                   <button className="btn btn-danger btn-sm float-right"
                     onClick={() => eliminar(item.id)}
@@ -123,6 +148,9 @@ function App() {
             }
           </ul>
         </div>
+
+        {/* bloque para editar o agregar las tareas */}
+
         <div className="col-md-6">
           <h3 className="text-center">
             {
